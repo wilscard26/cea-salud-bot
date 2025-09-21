@@ -6,90 +6,56 @@
   <title>CEA Salud – Asistente de Citas</title>
   <style>
     :root{
-      --bg:#0b132b;        /* azul oscuro */
-      --bg-soft:#1c2541;   /* azul medio */
-      --accent:#3a86ff;    /* acento */
-      --ok:#38b000;        /* ok */
-      --danger:#d00000;    /* error */
-      --text:#e9f1ff;      /* texto claro */
-      --muted:#9fb3d6;     /* texto tenue */
-      --card:#111827;      /* tarjeta */
+      --bg:#0b132b; --bg-soft:#1c2541; --accent:#3a86ff;
+      --ok:#38b000; --danger:#d00000; --text:#e9f1ff;
+      --muted:#9fb3d6; --card:#111827;
     }
     *{box-sizing:border-box}
     body{margin:0;background:linear-gradient(180deg,var(--bg),#0f233d 60%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    header{display:flex;gap:12px;align-items:center;justify-content:center;padding:20px 12px;background:transparent}
-    header img{height:44px;width:44px;border-radius:12px;background:#fff;object-fit:cover}
-    header .titles{display:flex;flex-direction:column;line-height:1}
+    header{display:flex;gap:12px;align-items:center;justify-content:center;padding:20px 12px}
+    header .logo{font-size:36px}
     header .titles h1{margin:0;font-size:20px}
     header .titles span{font-size:12px;color:var(--muted)}
 
     .app{max-width:920px;margin:0 auto;padding:12px}
     .grid{display:grid;grid-template-columns:1fr;gap:16px}
-
-    .panel{background:rgba(17,24,39,.6);backdrop-filter: blur(8px);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden}
+    .panel{background:rgba(17,24,39,.6);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
     .panel .bar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-soft)}
-    .panel .bar .status{font-size:12px;color:var(--muted)}
-
-    #chat{height:62vh;min-height:420px;overflow:auto;padding:18px;scroll-behavior:smooth}
+    #chat{height:62vh;overflow:auto;padding:18px;scroll-behavior:smooth}
     #chat ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
-
-    .msg{max-width:85%;padding:12px 14px;border-radius:14px;font-size:15px;line-height:1.35;background:#0f1b33;border:1px solid rgba(255,255,255,.06)}
+    .msg{max-width:85%;padding:12px 14px;border-radius:14px;font-size:15px;background:#0f1b33}
     .bot{align-self:flex-start;background:#0e223f}
-    .bot .meta{color:var(--muted);font-size:12px;margin-top:6px}
     .user{align-self:flex-end;background:#12254a}
-
-    .quickbar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px;border-top:1px solid rgba(255,255,255,.08);background:rgba(10,17,34,.6)}
-    .chip{border:1px solid rgba(255,255,255,.12);padding:8px 12px;border-radius:999px;cursor:pointer;font-size:14px;background:transparent;color:#fff}
+    .quickbar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px;border-top:1px solid rgba(255,255,255,.08)}
+    .chip{border:1px solid rgba(255,255,255,.12);padding:8px 12px;border-radius:999px;cursor:pointer;font-size:14px;color:#fff;background:transparent}
     .chip:hover{border-color:var(--accent)}
-
     .composer{display:flex;gap:10px;padding:10px;background:rgba(10,17,34,.8);border-top:1px solid rgba(255,255,255,.08)}
     .composer input{flex:1;border:1px solid rgba(255,255,255,.12);background:#0e1a31;color:#fff;border-radius:10px;padding:12px 14px;font-size:15px}
     .composer button{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:12px 16px;font-size:15px;cursor:pointer}
-    .composer button:disabled{opacity:.5;cursor:not-allowed}
-
-    .tag{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.15);font-size:12px;color:var(--muted)}
-
-    footer{max-width:920px;margin:6px auto 18px;color:var(--muted);font-size:12px;text-align:center}
-    a{color:#9ec1ff}
-
-    @media (min-width:900px){
-      .grid{grid-template-columns:380px 1fr}
-      #chat{height:68vh}
-    }
+    .flash{animation:flash 0.6s ease-out}@keyframes flash{0%{background:#38b000}100%{background:transparent}}
+    @media (min-width:900px){.grid{grid-template-columns:380px 1fr}}
   </style>
 </head>
 <body>
   <header>
-    <img id="logo" src="https://dummyimage.com/200x200/ffffff/000.png&text=CEA" alt="CEA Salud"/>
-    <div class="titles">
-      <h1>CEA Salud – Asistente virtual</h1>
-      <span>Citas de medicina general • demo académico</span>
-    </div>
+    <div class="logo">🤖</div>
+    <div class="titles"><h1>CEA Salud – Asistente virtual</h1><span>Citas de medicina general</span></div>
+    <div id="clock" style="margin-left:20px;font-size:14px;color:var(--muted)"></div>
   </header>
 
   <div class="app grid">
-    <!-- Panel lateral con info fija -->
-    <aside class="panel" aria-label="Información del centro">
-      <div class="bar"><strong>CEA Salud</strong><span class="status">Centro médico • demo</span></div>
-      <div style="padding:14px 16px;font-size:14px;color:#d7e2ff">
+    <aside class="panel"><div class="bar"><strong>CEA Salud</strong><span>Centro médico</span></div>
+      <div style="padding:14px 16px;font-size:14px">
         <p><strong>Dirección</strong><br/>Av. El Dorado No. 03-23</p>
         <p><strong>Teléfono</strong><br/><a href="tel:+573232378913">+57 323 237 8913</a></p>
-        <p><strong>Horario hoy</strong><br/>09:00 • 11:00 • 14:00 • 16:00</p>
-        <p><strong>Cómo funciona</strong><br/>Chatea, elige una opción y confirma horario. Tus datos se guardan en este navegador.</p>
-        <p class="tag">Datos locales (localStorage)</p>
+        <p><strong>Horario hoy</strong><br/>09:00 • 10:00 • 11:00 • 12:00 • 13:00 • 14:00 • 15:00 • 16:00</p>
       </div>
     </aside>
 
-    <!-- Panel de chat -->
-    <section class="panel" aria-label="Chat">
-      <div class="bar">
-        <div>Asistente</div>
-        <div class="status" id="status">en línea</div>
-      </div>
+    <section class="panel">
+      <div class="bar"><div>Asistente</div><div class="status" id="status">en línea</div></div>
       <div id="chat"><ul id="log"></ul></div>
-
       <div class="quickbar" id="quickbar"></div>
-
       <div class="composer">
         <input id="input" placeholder="Escribe aquí…" autocomplete="off" />
         <button id="send">Enviar</button>
@@ -97,214 +63,45 @@
     </section>
   </div>
 
-  <footer>
-    Proyecto académico. Sin conexión a bases de datos reales. Puedes publicar este archivo como sitio estático (GitHub Pages o Netlify).
-  </footer>
-
   <script>
-    // === Datos de negocio de la demo ===
-    const BUSINESS = {
-      name: 'CEA Salud',
-      address: 'Av. El Dorado No. 03-23',
-      phone: '+57 323 237 8913',
-      times: ['09:00', '11:00', '14:00', '16:00'], // horarios del día
-      expertContact: 'tel:+573232378913' // o usa whatsapp: 'https://wa.me/573232378913'
-    };
+    const BUSINESS={name:'CEA Salud',address:'Av. El Dorado No. 03-23',phone:'+57 323 237 8913',times:['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00'],expertContact:'tel:+573232378913'};
+    const DBKEY='ceaApp_appointments_v1';
+    const state={step:'idle',temp:{},lastMenu:'root'};
 
-    // === Estado y almacenamiento ===
-    const DBKEY = 'ceaApp_appointments_v1';
-    const state = { step: 'idle', temp: {}, lastMenu: 'root' };
+    function loadAppointments(){try{return JSON.parse(localStorage.getItem(DBKEY))||[]}catch(e){return[]}}
+    function saveAppointments(list){localStorage.setItem(DBKEY,JSON.stringify(list))}
+    function listDate(offset=0){const t=new Date();t.setDate(t.getDate()+offset);const y=t.getFullYear();const m=String(t.getMonth()+1).padStart(2,'0');const d=String(t.getDate()).padStart(2,'0');return{iso:`${y}-${m}-${d}`,label:t.toLocaleDateString('es-CO',{weekday:'long',day:'2-digit',month:'long'})}}
 
-    function loadAppointments(){
-      try{ return JSON.parse(localStorage.getItem(DBKEY)) || []; }catch(e){ return []; }
-    }
-    function saveAppointments(list){ localStorage.setItem(DBKEY, JSON.stringify(list)); }
-    function listToday(){
-      const today = new Date();
-      const y = today.getFullYear();
-      const m = String(today.getMonth()+1).padStart(2,'0');
-      const d = String(today.getDate()).padStart(2,'0');
-      return {iso:`${y}-${m}-${d}`, label: today.toLocaleDateString('es-CO',{weekday:'long', day:'2-digit', month:'long'})};
-    }
+    const logEl=document.getElementById('log'),inputEl=document.getElementById('input'),quickbar=document.getElementById('quickbar'),sendBtn=document.getElementById('send'),chatEl=document.getElementById('chat');
 
-    // === UI helpers ===
-    const logEl = document.getElementById('log');
-    const inputEl = document.getElementById('input');
-    const quickbar = document.getElementById('quickbar');
-    const sendBtn = document.getElementById('send');
-    const chatEl = document.getElementById('chat');
+    function addMsg(h,who='bot'){const li=document.createElement('li');li.className=`msg ${who}`;li.innerHTML=h;logEl.appendChild(li);chatEl.scrollTop=chatEl.scrollHeight}
+    function bot(t){addMsg(escapeHtml(t),'bot')}function botHTML(h){addMsg(h,'bot')}function user(t){addMsg(escapeHtml(t),'user')}function escapeHtml(s){return s?.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))||''}
+    function chips(o){quickbar.innerHTML='';(o||[]).forEach(opt=>{const b=document.createElement('button');b.className='chip';b.textContent=opt.label;b.addEventListener('click',()=>handleAction(opt.action));quickbar.appendChild(b)})}
 
-    function addMsg(html, who='bot'){
-      const li = document.createElement('li');
-      li.className = `msg ${who}`;
-      li.innerHTML = html;
-      logEl.appendChild(li);
-      chatEl.scrollTop = chatEl.scrollHeight;
-    }
+    function mainMenu(){state.step='idle';chips([{label:'Consultar disponibilidad',action:'show_schedule'},{label:'Agendar cita médica',action:'book_start'},{label:'Confirmar cita',action:'confirm_lookup'},{label:'Cancelar cita',action:'cancel_lookup'},{label:'Hablar con un experto',action:'expert_start'}]);bot('Elige una opción.')}
 
-    function bot(text){ addMsg(escapeHtml(text),'bot'); }
-    function botHTML(html){ addMsg(html,'bot'); }
-    function user(text){ addMsg(escapeHtml(text),'user'); }
-    function escapeHtml(str){ return str?.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) || ''; }
+    function startBooking(offset=0){state.step='ask_name';state.temp={offset};chips([]);bot('¿Cuál es tu nombre completo?')}
 
-    function chips(options){
-      quickbar.innerHTML = '';
-      (options||[]).forEach(opt => {
-        const b = document.createElement('button');
-        b.className = 'chip';
-        b.textContent = opt.label;
-        b.dataset.action = opt.action || '';
-        b.addEventListener('click', () => handleAction(opt.action));
-        quickbar.appendChild(b);
-      });
-    }
+    function onUserInput(t){const v=t.trim();if(!v)return;user(v);switch(state.step){case'ask_name':state.temp.name=v;state.step='ask_id';bot('Documento de identidad (máx 10 dígitos):');break;case'ask_id':if(!/^\d{5,10}$/.test(v)){bot('Documento inválido, ingresa 5-10 dígitos numéricos.');return}state.temp.id=v;state.step='ask_email';bot('Correo electrónico:');break;case'ask_email':if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){bot('Correo no válido.');return}state.temp.email=v;state.step='pick_time';showAvailableTimes('Elige un horario para hoy:',state.temp.offset);break;case'pick_time':selectTime(v);break;case'lookup_key':lookupAppointment(v);break;case'cancel_key':cancelAppointment(v);break;default:routeByFreeText(v)}}
 
-    function mainMenu(){
-      state.step = 'idle';
-      state.lastMenu = 'root';
-      chips([
-        {label:'Consultar disponibilidad', action:'show_schedule'},
-        {label:'Agendar cita médica', action:'book_start'},
-        {label:'Confirmar cita', action:'confirm_lookup'},
-        {label:'Hablar con un experto', action:'expert_start'}
-      ]);
-      bot('Elige una opción. También puedes escribir.');
-    }
+    function routeByFreeText(t){const s=t.toLowerCase();if(s.includes('agendar'))return handleAction('book_start');if(s.includes('dispon'))return handleAction('show_schedule');if(s.includes('cancel'))return handleAction('cancel_lookup');bot('No entendí.')}
 
-    // === Flujo: agendar ===
-    function startBooking(){
-      state.step = 'ask_name';
-      state.temp = {};
-      chips([]);
-      bot('Perfecto. Para agendar necesito algunos datos. ¿Cuál es tu nombre completo?');
-    }
+    function showAvailableTimes(p,offset=0){const{iso,label}=listDate(offset);const booked=loadAppointments().filter(a=>a.date===iso).map(a=>a.time);const now=new Date();const ch=now.getHours(),cm=now.getMinutes();const avail=BUSINESS.times.filter(t=>{const[h,m]=t.split(':').map(Number);return offset>0||(h>ch||(h===ch&&m>cm))}).filter(t=>!booked.includes(t));if(avail.length===0){botHTML(`⏳ No quedan horarios disponibles para ${offset===0?'hoy':'esa fecha'} (${label}).`);chips([{label:'Agendar mañana',action:'book_tomorrow'},{label:'Volver al menú',action:'menu'}]);return}bot(`${p} (${label})`);chips(avail.map(time=>({label:time,action:`pick_${time}`})).concat([{label:'Cancelar',action:'menu'}]));state.step='pick_time'}
 
-    function onUserInput(text){
-      const t = text.trim(); if(!t) return;
-      user(t);
-      switch(state.step){
-        case 'ask_name':
-          state.temp.name = t; state.step = 'ask_id';
-          bot('Documento de identidad:'); break;
-        case 'ask_id':
-          state.temp.id = t; state.step = 'ask_email';
-          bot('Correo electrónico:'); break;
-        case 'ask_email':
-          if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(t)){ bot('Correo no válido. Intenta de nuevo:'); return; }
-          state.temp.email = t; state.step = 'pick_time';
-          showAvailableTimes('Elige un horario para hoy:'); break;
-        case 'pick_time':
-          selectTime(t); break;
-        case 'lookup_key':
-          lookupAppointment(t); break;
-        case 'expert_name':
-          state.temp.name = t; state.step = 'expert_id'; bot('Documento de identidad:'); break;
-        case 'expert_id':
-          state.temp.id = t; state.step = 'expert_email'; bot('Correo electrónico:'); break;
-        case 'expert_email':
-          if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(t)){ bot('Correo no válido. Intenta de nuevo:'); return; }
-          state.step = 'idle';
-          botHTML(`Listo. Puedes contactar a un experto aquí: <a href="${BUSINESS.expertContact}" target="_blank" rel="noopener">Abrir contacto</a>.`);
-          chips([{label:'Volver al menú', action:'menu'}]);
-          break;
-        default:
-          // intenta mapear al menú por texto libre
-          routeByFreeText(t);
-      }
-    }
+    function selectTime(raw){const time=raw.replace(/^pick_/,'');const{iso,label}=listDate(state.temp.offset||0);const appts=loadAppointments();appts.push({id:state.temp.id,email:state.temp.email,name:state.temp.name,date:iso,time});saveAppointments(appts);botHTML(`<div class="flash">✔️ Cita confirmada para <strong>${label}</strong> a las <strong>${time}</strong>.</div>`);chips([{label:'Volver al menú',action:'menu'}]);state.step='idle'}
 
-    function routeByFreeText(t){
-      const s = t.toLowerCase();
-      if(s.includes('agendar')) return handleAction('book_start');
-      if(s.includes('dispon')||s.includes('horario')) return handleAction('show_schedule');
-      if(s.includes('confirm')) return handleAction('confirm_lookup');
-      if(s.includes('experto')||s.includes('hablar')) return handleAction('expert_start');
-      bot('No entendí. Usa el menú.');
-    }
+    function lookupAppointment(key){const appts=loadAppointments();const found=appts.find(a=>a.id===key||a.email.toLowerCase()===key.toLowerCase());if(!found){bot('No encontré cita.');return}botHTML(`Cita de ${found.name}: ${found.date} ${found.time}`);chips([{label:'Volver al menú',action:'menu'}])}
 
-    function showAvailableTimes(prefix='Horarios disponibles hoy:'){
-      const {iso, label} = listToday();
-      const booked = loadAppointments().filter(a => a.date === iso).map(a => a.time);
-      const avail = BUSINESS.times.filter(t => !booked.includes(t));
-      if(avail.length===0){ bot(`No hay cupos para hoy (${label}).`); chips([{label:'Volver al menú', action:'menu'}]); return; }
-      bot(`${prefix}`);
-      chips(avail.map(time => ({label: time, action: `pick_${time}`})).concat([{label:'Cancelar', action:'menu'}]));
-      state.step = 'pick_time';
-    }
+    function cancelAppointment(key){let appts=loadAppointments();const before=appts.length;appts=appts.filter(a=>a.id!==key&&a.email.toLowerCase()!==key.toLowerCase());if(appts.length===before){bot('No encontré cita para cancelar.');return}saveAppointments(appts);bot('✅ Cita cancelada.');chips([{label:'Volver al menú',action:'menu'}])}
 
-    function selectTime(raw){
-      const time = raw.replace(/^pick_/,'');
-      if(!BUSINESS.times.includes(time)) { bot('Selecciona un horario del menú.'); return; }
-      const {iso, label} = listToday();
-      // guarda
-      const appts = loadAppointments();
-      appts.push({
-        id: state.temp.id,
-        email: state.temp.email,
-        name: state.temp.name,
-        date: iso,
-        time
-      });
-      saveAppointments(appts);
-      chips([{label:'Volver al menú', action:'menu'}, {label:'Ver disponibilidad', action:'show_schedule'}]);
-      botHTML(`Tu cita médica general ha quedado <strong>confirmada</strong> para <strong>${label}</strong> a las <strong>${time}</strong> en ${BUSINESS.name}.<br><br>
-      📍 <strong>Dirección:</strong> ${BUSINESS.address}<br>
-      📞 <strong>Teléfono:</strong> ${BUSINESS.phone}<br>
-      ✉️ Recibirás un recordatorio en este navegador.`);
-      state.step='idle';
-    }
+    function handleAction(a){switch(a){case'menu':mainMenu();return;case'show_schedule':showAvailableTimes('Horarios disponibles');return;case'book_start':startBooking(0);return;case'book_tomorrow':startBooking(1);return;case'confirm_lookup':state.step='lookup_key';chips([]);bot('Documento o correo para buscar cita:');return;case'cancel_lookup':state.step='cancel_key';chips([]);bot('Documento o correo para cancelar cita:');return}}
 
-    function lookupAppointment(key){
-      const K = key.trim().toLowerCase();
-      const appts = loadAppointments();
-      const found = appts.find(a => a.id.toLowerCase()===K || a.email.toLowerCase()===K);
-      if(!found){ bot('No encontré una cita con ese dato. Intenta de nuevo o vuelve al menú.'); return; }
-      const date = new Date(found.date + 'T00:00:00');
-      botHTML(`Cita encontrada para <strong>${found.name}</strong>: <br/>${date.toLocaleDateString('es-CO',{weekday:'long', day:'2-digit', month:'long'})} a las ${found.time}.`);
-      chips([{label:'Volver al menú', action:'menu'}]);
-      state.step='idle';
-    }
+    function hello(){const{label}=listDate();botHTML(`<strong>¡Hola!</strong> Bienvenido a ${BUSINESS.name}. Te ayudo con tu cita de <em>medicina general</em> para hoy (<strong>${label}</strong>).`);mainMenu()}
 
-    // === Acciones por botones ===
-    function handleAction(action){
-      switch(action){
-        case 'menu':
-          bot('Volvemos al menú.');
-          mainMenu();
-          return;
-        case 'show_schedule':
-          showAvailableTimes();
-          return;
-        case 'book_start':
-          startBooking();
-          return;
-        case 'confirm_lookup':
-          state.step = 'lookup_key';
-          state.temp = {}; chips([]);
-          bot('Para confirmar tu cita, escribe tu número de documento o tu correo:');
-          return;
-        case 'expert_start':
-          state.step = 'expert_name'; state.temp = {}; chips([]);
-          bot('Claro. Para conectarte con un experto, primero dime tu nombre completo:');
-          return;
-        default:
-          // Horarios (pick_HH:mm)
-          if(action && action.startsWith('pick_')){ selectTime(action); return; }
-      }
-    }
+    function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}
+    setInterval(updateClock,1000);updateClock();
 
-    // === inicialización ===
-    function hello(){
-      const {label} = listToday();
-      botHTML(`<strong>¡Hola!</strong> Bienvenido a ${BUSINESS.name}. Te ayudo con tu cita de <em>medicina general</em> para hoy (<strong>${label}</strong>).`);
-      mainMenu();
-    }
-
-    // eventos
-    sendBtn.addEventListener('click', () => { const v = inputEl.value; inputEl.value=''; onUserInput(v); });
-    inputEl.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); sendBtn.click(); } });
-
-    // listo
+    sendBtn.addEventListener('click',()=>{const v=inputEl.value;inputEl.value='';onUserInput(v)});inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendBtn.click()}});
     hello();
   </script>
 </body>
